@@ -1,0 +1,28 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  tasks:
+    - name: Add device without meta fields
+      fmgr_dvm_cmd_add_device:
+        dvm_cmd_add_device:
+          adom: root
+          device:
+            device action: add_model
+            os_ver: "7.0"
+            mr: 2
+            name: fwl-dev-001
+            sn: FGT60FTK2XXXXX
+
+    - name: Add device with meta fields
+      fmgr_dvm_cmd_add_device:
+        dvm_cmd_add_device:
+          adom: root
+          device:
+            device action: add_model
+            os_ver: "7.0"
+            mr: 2
+            name: fwl-dev-001
+            sn: FGT60FTK2XXXXX
+            meta fields: 
+              lan_subnet: 10.0.0.0/24
+              dmz_subnet: 10.1.0.0/24

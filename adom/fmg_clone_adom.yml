@@ -1,0 +1,14 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  tasks:
+    - name: Clone ADOM root
+      fortinet.fortimanager.fmgr_generic:
+        method: clone
+        rc_succeeded:
+          - 0
+          - -2
+        params:
+          - url: /dvmdb/adom/root
+            data:
+              name: "new_adom_name"

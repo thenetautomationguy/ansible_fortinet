@@ -1,0 +1,31 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  vars:
+    adom_name: "customerXYZ"
+  tasks:
+    - name: Add ADOM 7.0
+      fortinet.fortimanager.fmgr_generic:
+        method: add
+        rc_succeeded:
+          - 0
+          - -2
+        params:
+          - url: /dvmdb/adom
+            data:
+              name: "{{adom_name}}"
+              mr: 0
+              os_ver: "7.0"
+              
+    - name: Add ADOM 7.2
+      fortinet.fortimanager.fmgr_generic:
+        method: add
+        rc_succeeded:
+          - 0
+          - -2
+        params:
+          - url: /dvmdb/adom
+            data:
+              name: "{{adom_name}}"
+              mr: 2
+              os_ver: "7.0"

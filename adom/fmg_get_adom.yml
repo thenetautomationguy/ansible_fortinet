@@ -1,0 +1,15 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  tasks:
+    - name: Get ADOM
+      fortinet.fortimanager.fmgr_generic:
+        method: get
+        rc_succeeded:
+          - 0
+          - -2
+        params:
+          - url: /dvmdb/adom
+      register: output
+    - debug:
+        msg: "{{output}}"
