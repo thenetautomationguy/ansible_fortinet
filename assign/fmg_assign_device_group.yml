@@ -3,16 +3,16 @@
   - fortinet.fortimanager
   vars:
     adom_name: new_adom_name
-    policypackage_name: testpackage
+    device_group_name: FGT
     device_name: fwl-dev-001
   tasks:
-  - name: Assign Policy Package
-    fmgr_pm_pkg_scopemember:
+  - name: Add firewall to Device Group
+    fmgr_dvmdb_group_objectmember:
       bypass_validation: False
       adom: "{{adom_name}}"
-      pkg_path: "{{policypackage_name}}"
-      state: present
+      group: "{{device_group_name}}"
+      state: "present"
       proposed_method: "add"
-      pm_pkg_scopemember:
+      dvmdb_group_objectmember:
         name: "{{device_name}}"
-        vdom: root
+        vdom: "root"

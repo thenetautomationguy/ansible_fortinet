@@ -1,5 +1,0 @@
-- hosts: fmg-dev-001
-  collections:
-  - fortinet.fortimanager
-  tasks:
-  
