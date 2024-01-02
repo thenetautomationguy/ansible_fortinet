@@ -1,0 +1,20 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  vars:
+    adom_name: new_adom_name
+    cli_name: set_hostname
+    device_name: fwl-dev-001
+  tasks:
+    - name: Create CLI script
+      fmgr_generic:
+         method: set
+         params:
+            - url: "/dvmdb/adom/{{adom_name}}/script"
+              data:
+                - name: "{{cli_name}}"
+                  type: "cli"
+                  content: |
+                            config system global
+                              set hostname {{device_name}}
+                            end

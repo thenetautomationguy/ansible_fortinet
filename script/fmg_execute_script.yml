@@ -1,0 +1,33 @@
+- hosts: fmg-dev-001
+  collections:
+  - fortinet.fortimanager
+  vars:
+    adom_name: new_adom_name
+    cli_name: set_hostname
+    device_name: fwl-dev-001
+  tasks:
+    - name: Execute the script on the device
+      fmgr_generic:
+        method: exec
+        params:
+            - url: "/dvmdb/adom/{{adom_name}}/script/execute"
+              data:
+                script: "{{cli_name}}"
+                adom: "{{adom_name}}"
+                scope:
+                    - name: "{{device_name}}"
+                      vdom: "root"
+      register: output
+
+    - name: Wait for task
+      fmgr_generic:
+        method: get
+        params:
+            - url: /task/task/{{output.ansible_module_results.task}}
+      register: taskinfo
+      until: taskinfo.ansible_module_results.percent == 100
+      retries: 12
+      delay: 5
+      failed_when:
+        - taskinfo.ansible_module_results.state == 'error'
+        - taskinfo.ansible_module_results.num_err != 0
