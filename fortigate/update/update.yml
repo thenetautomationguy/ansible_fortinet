@@ -1,0 +1,19 @@
+- name: Update Fortigate
+  hosts: localhost
+  tasks:
+  - name: Upgrade Fortigate with local Firmware File
+    ansible.builtin.uri:
+      url: "https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/system/firmware/upgrade"
+      method: "POST"
+      headers:
+        Authorization: "Bearer {{api_token}}"
+        Content-Type: "application/json"
+      body: |-
+        {
+          "ignore_invalid_signature": false,
+          "file_content": "{{ lookup( 'file', './Firmware/FGT_VM64-v7.2.4.F-build1396-FORTINET.out') | string | b64encode }}",
+          "source": "upload"
+        }
+      validate_certs: false
+      return_content: true
+      body_format: json
