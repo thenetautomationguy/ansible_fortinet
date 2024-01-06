@@ -1,7 +1,7 @@
 - name: Update Fortigate
   hosts: localhost
   tasks:
-  - name: Upgrade Fortigate with local Firmware File
+  - name: Upgrade firmware image on this device using uploaded file
     ansible.builtin.uri:
       url: "https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/system/firmware/upgrade"
       method: "POST"

@@ -1,0 +1,32 @@
+- name: Update Fortigate
+  hosts: localhost
+  vars:
+    version: 7.2.6
+    firmware_query: '[?contains(version, `{{version}}`)].id'
+  tasks:
+  - name: Retrieve a list of firmware images available
+    ansible.builtin.uri:
+      url: "https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/system/firmware"
+      method: "GET"
+      headers:
+        Authorization: "Bearer {{api_token}}"
+        Content-Type: "application/json"
+      validate_certs: false
+      return_content: true
+      body_format: json
+    register: output
+  - name: Upgrade firmware image on this device using Fortiguard
+    ansible.builtin.uri:
+      url: "https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/system/firmware/upgrade"
+      method: "POST"
+      headers:
+        Authorization: "Bearer {{api_token}}"
+        Content-Type: "application/json"
+      body: |-
+        {
+          "file_name": "{{ output.json.results.available | json_query(firmware_query) }}",
+          "source": "fortiguard"
+        }
+      validate_certs: false
+      return_content: true
+      body_format: json
