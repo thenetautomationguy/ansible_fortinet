@@ -1,0 +1,18 @@
+- hosts: fwl-dev-001
+  collections:
+  - fortinet.fortios
+  vars:
+   timestamp: "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}"
+   filename: "{{inventory_hostname}}_{{timestamp}}.conf"
+  tasks:
+  - name: backup fortigate device
+    fortios_monitor:
+     selector: 'backup.system.config'
+     vdom: 'root'
+     params:
+         scope: 'global'
+    register: output
+  - name: save output as file
+    copy:
+     content: '{{ output.meta.raw }}'
+     dest: './backup/{{inventory_hostname}}/{{filename}}'
