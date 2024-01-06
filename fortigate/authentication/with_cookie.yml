@@ -1,0 +1,33 @@
+- hosts: localhost
+  vars:
+    dstip: "1.1.1.1"
+    dport: "443"
+    protocol: "tcp"
+    srcip: "192.168.1.2"
+    sintf: "VLANX"
+  tasks:
+  - name: get ccsrftoken
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/logincheck'
+      method: POST
+      body: 'username={{ansible_user}}&secretkey={{ansible_password}}'
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      validate_certs: false
+    register: result
+  - name: execute policy lookup
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/firewall/policy-lookup?ipv6=false&dest={{dstip}}&destport={{dport}}&ipVersion=ipv4&ipv6=false&protocol={{protocol}}&sourceip={{srcip}}&srcintf={{sintf}}&vdom=root'
+      method: GET
+      validate_certs: false
+      headers:
+        Cookie: '{{result.cookies_string}}'
+    register: output
+  - name: show output
+    ansible.builtin.debug:
+      msg: "{{output}}"
+  - name: make cookie invalid
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/logout'
+      method: POST
+      validate_certs: false

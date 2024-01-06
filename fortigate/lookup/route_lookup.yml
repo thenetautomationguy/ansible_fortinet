@@ -1,0 +1,29 @@
+- hosts: localhost
+  vars:
+    host: "1.1.1.1"
+  tasks:
+  - name: get ccsrftoken
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/logincheck'
+      method: POST
+      body: 'username={{ansible_user}}&secretkey={{ansible_password}}'
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      validate_certs: false
+    register: result
+  - name: execute route lookup
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/api/v2/monitor/router/lookup/select/?destination={{host}}'
+      method: GET
+      validate_certs: false
+      headers:
+        Cookie: '{{result.cookies_string}}'
+    register: output
+  - name: show output
+    ansible.builtin.debug:
+      msg: "{{output}}"
+  - name: make cookie invalid
+    ansible.builtin.uri:
+      url: 'https://{{ansible_host}}:{{ansible_httpapi_port}}/logout'
+      method: POST
+      validate_certs: false
